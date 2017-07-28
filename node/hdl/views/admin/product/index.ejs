@@ -1,0 +1,216 @@
+<%- include ../public/header %>
+
+<!--[if lt IE 7 ]>
+<body class="ie ie6"> <![endif]--><!--[if IE 7 ]>
+<body class="ie ie7 "> <![endif]--><!--[if IE 8 ]>
+<body class="ie ie8 "> <![endif]--><!--[if IE 9 ]>
+<body class="ie ie9 "> <![endif]--><!--[if (gt IE 9)|!(IE)]><!-->
+<body id="particles-js">
+<!--<![endif]-->
+
+
+<%- include ../public/navbar %>
+
+<%- include ../public/nav %>
+
+
+<div class="content">
+
+    <div class="header">
+
+        <h1 class="page-title">order</h1>
+    </div>
+
+    <ul class="breadcrumb">
+        <li>
+            <a href="<%= host %>">Home</a>
+            <span class="divider">/</span></li>
+        <li class="active">Orders</li>
+    </ul>
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+
+            <div class="btn-toolbar">
+                <a href="<%= host %>admin/product/add">
+                    <button class="btn btn-primary"><i class="icon-plus"></i> New Orders</button>
+                </a>
+
+                <button class="btn">Import</button>
+                <button class="btn">Export</button>
+                <div class="btn-group"></div>
+            </div>
+            <div class="well">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>修改</th>
+                            <th>_id</th>
+                            <th>description</th>
+                            <th>cid</th>
+                            <th>add_time</th>
+                            <th>price</th>
+                            <th>name</th>
+                            <th>oldPrice</th>
+                            <th>status</th>
+                            <th>icon</th>
+                            <th>img</th>
+                            <th style="width: 26px;"></th>
+                            <!--_id: 5959e76b813bf81f68d3dc5b,-->
+                            <!--order_id: 'order_id',-->
+                            <!--product_id: 'product_id',-->
+                            <!--product_title: 'product_title',-->
+                            <!--price: 'price',-->
+                            <!--count: 'count',-->
+                            <!--all_price: 'all_price',-->
+                            <!--uid: 'uid',-->
+                            <!--username: 'username',-->
+                            <!--name: 'name',-->
+                            <!--phone: 'phone',-->
+                            <!--add_time: '2017-7-3 14:42:43',-->
+                            <!--staus: null-->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(var i = 0;i < data.length;i++){ %>
+                        <tr>
+                            <td>
+                                <a href="<%= host %>admin/product/updata?id=<%= data[i]._id %>">
+                                    <i class="icon-pencil"></i></a>
+                                <a href="<%= host %>admin/product/delete?id=<%= data[i]._id %>"><i class="icon-remove"></i></a>
+                            </td>
+                            <td><%= data[i]._id %></td>
+                            <td><%= data[i].description%></td>
+                            <td><%= data[i].cid %></td>
+                            <td><%= data[i].add_time %></td>
+                            <td><%= data[i].price %></td>
+
+                            <td><%= data[i].name %></td>
+
+                            <td><%= data[i].oldPrice %></td>
+
+                            <td><img src="<%= data[i].icon %>" alt=""></td>
+                            <td><img src="<%=host%><%= data[i].img %>" alt=""></td>
+
+                            <td>
+
+                                <%if(parseInt(data[i].status)==1){%>
+                                <a class="updata" href="javascript:;">  <button type="button" class="btn btn-success">已审核</button></a>
+
+                                <%}else{%>
+                                <a class="updata" href="javascript:;"> <button type="button" class="btn btn-danger">未审核</button></a>
+                                <%}%>
+
+                            </td>
+
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination" id="pagination1"></div>
+            <div class="modal small hide fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="myModalLabel">Delete Confirmation</h3>
+                </div>
+                <div class="modal-body">
+                    <p class="error-text">
+                        <i class="icon-warning-sign modal-icon"></i>Are you sure you want to delete the user?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    <button class="btn btn-danger" data-dismiss="modal">Delete</button>
+                </div>
+            </div>
+
+
+            <footer>
+                <hr>
+
+                <!-- Purchase a site license to remove this link from the footer: http://www.portnine.com/bootstrap-themes -->
+                <p class="pull-right">A
+                    <a href="http://www.portnine.com/bootstrap-themes" target="_blank">Free Bootstrap Theme</a>
+                    by
+                    <a href="http://www.portnine.com" target="_blank">Portnine</a>
+                </p>
+
+                <p>© 2012
+                    <a href="http://www.portnine.com" target="_blank">Portnine</a>
+                </p>
+            </footer>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="<%= host %>lib/bootstrap/js/bootstrap.js"></script>
+<script type="text/javascript">
+    //    $("[rel=tooltip]").tooltip();
+    //    $(function() {
+    //        $('.demo-cancel-click').click(function(){return false;});
+    //    });
+    $(".updata").click(function(){
+        var status="";
+        var btn=$(this).find("button")
+        var id=$(this).closest("tr").find("td").eq(0).text()
+        if($(this).find("button").text()=="已审核"){
+            status=1
+        }else{
+            status=0
+        }
+        $.get("<%=host%>admin/order/updataStatus",{"status":status,"id":id},function(result){
+            if(result.status==1){
+                if(btn.hasClass("btn-danger")){
+                    btn.removeClass("btn-danger").addClass("btn-success");
+                    btn.text("已审核")
+                }else{
+                    btn.removeClass("btn-success").addClass("btn-danger")
+                    btn.text("未审核")
+                }
+
+            }
+        })
+    })
+</script>
+<script>
+   
+    // if(window.location.href.indexOf("?")==-1){
+    //     window.location.href=window.location.href+"?page=1"
+    //     console.log(window.location.href+"?page=1");
+    //      var page=1;
+    // }else{
+    //     var page=<%=currentPage%>;
+    // }
+   
+    $.jqPaginator('#pagination1', {
+   
+
+        totalPages: <%=page%>,
+        visiblePages: 10,
+        currentPage:<%=currentPage%>,
+        // currentPage:1,
+        first: '<li class="first"><a href="javascript:void(0);">First</a></li>',
+        prev: '<li class="prev"><a href="javascript:void(0);">Previous</a></li>',
+        next: '<li class="next"><a href="javascript:void(0);">Next</a></li>',
+        last: '<li class="last"><a href="javascript:void(0);">Last</a></li>',
+        page: '<li class="page"><a href="javascript:void(0);">{{page}}</a></li>',
+        onPageChange: function (num, type){
+            console.log(num);
+
+            if(num !=<%=currentPage%>){
+                window.location.href="<%= host %>admin/product?page="+num
+                }
+
+            }
+
+
+    });
+
+</script>
+</body></html>
+
+
